@@ -8,6 +8,8 @@ use App\Http\Controllers\Anggota\DashboardController as AnggotaDash;
 use App\Http\Controllers\Admin\AnggotaController;
 use App\Http\Controllers\Admin\KegiatanController;
 use App\Http\Controllers\Admin\PengumumanController;
+use App\Http\Controllers\Admin\ForumTopicController;
+use App\Http\Controllers\Admin\ForumPostController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,6 +33,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('pengumuman/{pengumuman}/toggle-publish', [PengumumanController::class,'togglePublish'])->name('pengumuman.toggle-publish');
         Route::post('pengumuman/{pengumuman}/toggle-pin', [PengumumanController::class,'togglePin'])->name('pengumuman.toggle-pin');
         Route::delete('pengumuman/{pengumuman}/cover', [PengumumanController::class,'removeCover'])->name('pengumuman.remove-cover');
+        // Topik
+        Route::resource('forum', ForumTopicController::class);
+        Route::post('forum/{forum}/toggle-open', [ForumTopicController::class,'toggleOpen'])->name('forum.toggle-open');
+        Route::post('forum/{forum}/toggle-pin', [ForumTopicController::class,'togglePin'])->name('forum.toggle-pin');
+        Route::post('forum/{forum}/unmark-solved', [ForumTopicController::class,'unmarkSolved'])->name('forum.unmark-solved');
+
+        // Post (nested, sebagian besar lewat halaman show topik)
+        Route::post('forum/{forum}/posts', [ForumPostController::class,'store'])->name('forum.posts.store');
+        Route::put('forum/{forum}/posts/{post}', [ForumPostController::class,'update'])->name('forum.posts.update');
+        Route::delete('forum/{forum}/posts/{post}', [ForumPostController::class,'destroy'])->name('forum.posts.destroy');
+        Route::post('forum/{forum}/posts/{post}/mark-solution', [ForumPostController::class,'markSolution'])->name('forum.posts.mark-solution');
     });
 
     // Bendahara
