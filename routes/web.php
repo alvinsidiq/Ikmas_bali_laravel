@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDash;
 use App\Http\Controllers\Bendahara\DashboardController as BendDash;
 use App\Http\Controllers\Anggota\DashboardController as AnggotaDash;
+use App\Http\Controllers\Admin\AnggotaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -18,6 +19,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function(){
         Route::get('/dashboard', [AdminDash::class, 'index'])->name('dashboard');
+        Route::resource('anggota', AnggotaController::class);
+        Route::post('anggota/{anggota}/toggle-active', [AnggotaController::class,'toggleActive'])->name('anggota.toggle-active');
+        Route::post('anggota/{anggota}/reset-password', [AnggotaController::class,'resetPassword'])->name('anggota.reset-password');
     });
 
     // Bendahara

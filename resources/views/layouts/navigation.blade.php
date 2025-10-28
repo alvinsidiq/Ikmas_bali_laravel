@@ -16,8 +16,11 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     @role('admin')
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                            {{ __('Admin') }}
+                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                            {{ __('Admin Dashboard') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.anggota.index')" :active="request()->routeIs('admin.anggota.*')">
+                            {{ __('Manajemen Anggota') }}
                         </x-nav-link>
                     @endrole
                     @role('bendahara')
@@ -86,8 +89,11 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
             @role('admin')
-                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.*')">
-                    {{ __('Admin') }}
+                <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                    {{ __('Admin Dashboard') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.anggota.index')" :active="request()->routeIs('admin.anggota.*')">
+                    {{ __('Manajemen Anggota') }}
                 </x-responsive-nav-link>
             @endrole
             @role('bendahara')

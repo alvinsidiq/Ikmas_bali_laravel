@@ -46,4 +46,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function profile()
+    {
+        return $this->hasOne(\App\Models\AnggotaProfile::class);
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        return $this->profile && $this->profile->is_active ? 'Aktif' : 'Nonaktif';
+    }
 }
