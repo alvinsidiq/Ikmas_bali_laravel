@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDash;
 use App\Http\Controllers\Bendahara\DashboardController as BendDash;
 use App\Http\Controllers\Anggota\DashboardController as AnggotaDash;
 use App\Http\Controllers\Admin\AnggotaController;
+use App\Http\Controllers\Admin\KegiatanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -22,6 +23,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('anggota', AnggotaController::class);
         Route::post('anggota/{anggota}/toggle-active', [AnggotaController::class,'toggleActive'])->name('anggota.toggle-active');
         Route::post('anggota/{anggota}/reset-password', [AnggotaController::class,'resetPassword'])->name('anggota.reset-password');
+        Route::resource('kegiatan', KegiatanController::class);
+        Route::post('kegiatan/{kegiatan}/toggle-publish', [KegiatanController::class,'togglePublish'])->name('kegiatan.toggle-publish');
+        Route::delete('kegiatan/{kegiatan}/poster', [KegiatanController::class,'removePoster'])->name('kegiatan.remove-poster');
     });
 
     // Bendahara
