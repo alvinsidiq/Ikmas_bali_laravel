@@ -25,6 +25,9 @@
                         <x-nav-link :href="route('admin.kegiatan.index')" :active="request()->routeIs('admin.kegiatan.*')">
                             {{ __('Kegiatan') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.pengumuman.index')" :active="request()->routeIs('admin.pengumuman.*')">
+                            {{ __('Pengumuman') }}
+                        </x-nav-link>
                     @endrole
                     @role('bendahara')
                         <x-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.*')">
@@ -100,6 +103,9 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.kegiatan.index')" :active="request()->routeIs('admin.kegiatan.*')">
                     {{ __('Kegiatan') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.pengumuman.index')" :active="request()->routeIs('admin.pengumuman.*')">
+                    {{ __('Pengumuman') }}
                 </x-responsive-nav-link>
             @endrole
             @role('bendahara')

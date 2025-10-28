@@ -7,6 +7,7 @@ use App\Http\Controllers\Bendahara\DashboardController as BendDash;
 use App\Http\Controllers\Anggota\DashboardController as AnggotaDash;
 use App\Http\Controllers\Admin\AnggotaController;
 use App\Http\Controllers\Admin\KegiatanController;
+use App\Http\Controllers\Admin\PengumumanController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -26,6 +27,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('kegiatan', KegiatanController::class);
         Route::post('kegiatan/{kegiatan}/toggle-publish', [KegiatanController::class,'togglePublish'])->name('kegiatan.toggle-publish');
         Route::delete('kegiatan/{kegiatan}/poster', [KegiatanController::class,'removePoster'])->name('kegiatan.remove-poster');
+        Route::resource('pengumuman', PengumumanController::class);
+        Route::post('pengumuman/{pengumuman}/toggle-publish', [PengumumanController::class,'togglePublish'])->name('pengumuman.toggle-publish');
+        Route::post('pengumuman/{pengumuman}/toggle-pin', [PengumumanController::class,'togglePin'])->name('pengumuman.toggle-pin');
+        Route::delete('pengumuman/{pengumuman}/cover', [PengumumanController::class,'removeCover'])->name('pengumuman.remove-cover');
     });
 
     // Bendahara
