@@ -31,6 +31,9 @@
                         <x-nav-link :href="route('admin.forum.index')" :active="request()->routeIs('admin.forum.*')">
                             {{ __('Forum') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.arsip.index')" :active="request()->routeIs('admin.arsip.*')">
+                            {{ __('Arsip') }}
+                        </x-nav-link>
                     @endrole
                     @role('bendahara')
                         <x-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.*')">
@@ -112,7 +115,10 @@
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('admin.forum.index')" :active="request()->routeIs('admin.forum.*')">
                     {{ __('Forum') }}
-                </x-responsive-nav-nav-link>
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.arsip.index')" :active="request()->routeIs('admin.arsip.*')">
+                    {{ __('Arsip') }}
+                </x-responsive-nav-link>
             @endrole
             @role('bendahara')
                 <x-responsive-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.*')">

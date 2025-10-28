@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\KegiatanController;
 use App\Http\Controllers\Admin\PengumumanController;
 use App\Http\Controllers\Admin\ForumTopicController;
 use App\Http\Controllers\Admin\ForumPostController;
+use App\Http\Controllers\Admin\ArsipController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -44,6 +45,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('forum/{forum}/posts/{post}', [ForumPostController::class,'update'])->name('forum.posts.update');
         Route::delete('forum/{forum}/posts/{post}', [ForumPostController::class,'destroy'])->name('forum.posts.destroy');
         Route::post('forum/{forum}/posts/{post}/mark-solution', [ForumPostController::class,'markSolution'])->name('forum.posts.mark-solution');
+        Route::resource('arsip', ArsipController::class);
+        Route::post('arsip/{arsip}/toggle-publish', [ArsipController::class,'togglePublish'])->name('arsip.toggle-publish');
+        Route::delete('arsip/{arsip}/file', [ArsipController::class,'removeFile'])->name('arsip.remove-file');
+        Route::get('arsip/{arsip}/download', [ArsipController::class,'download'])->name('arsip.download');
     });
 
     // Bendahara
