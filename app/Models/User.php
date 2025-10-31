@@ -56,4 +56,16 @@ class User extends Authenticatable
     {
         return $this->profile && $this->profile->is_active ? 'Aktif' : 'Nonaktif';
     }
+
+    public function kegiatanDiikuti(){
+        return $this->belongsToMany(\App\Models\Kegiatan::class, 'kegiatan_user')
+            ->withPivot(['status','kode','registered_at','checked_in_at'])
+            ->withTimestamps();
+    }
+
+    public function pengumumanTerbaca(){
+        return $this->belongsToMany(\App\Models\Pengumuman::class, 'pengumuman_user')
+            ->withPivot(['read_at'])
+            ->withTimestamps();
+    }
 }

@@ -1,4 +1,5 @@
-<x-app-layout>
-  <x-slot name="header"><h2 class="font-semibold text-xl">Anggota Dashboard</h2></x-slot>
-  <div class="p-6">Selamat datang, Anggota!</div>
-</x-app-layout>
+<x-anggota-layout title="Kegiatan" subtitle="Ikuti kegiatan terbaru komunitas">
+  <div class="bg-white p-6 shadow rounded">
+    Selamat datang! Silakan gunakan tab di atas untuk menjelajah menu anggota.
+  </div>
+</x-anggota-layout>

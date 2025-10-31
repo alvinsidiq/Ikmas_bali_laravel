@@ -15,9 +15,14 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             KegiatanSeeder::class,
+            KegiatanAnggotaSeeder::class,
             PengumumanSeeder::class,
+            PengumumanReadSeeder::class,
             ForumSeeder::class,
             ArsipSeeder::class,
+            DokumentasiSeeder::class,
+            LaporanSeeder::class,
+            IuranSeeder::class,
         ]);
     }
 }

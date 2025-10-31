@@ -34,6 +34,9 @@
                         <x-nav-link :href="route('admin.arsip.index')" :active="request()->routeIs('admin.arsip.*')">
                             {{ __('Arsip') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('admin.dokumentasi.albums.index')" :active="request()->routeIs('admin.dokumentasi.albums.*')">
+                            {{ __('Dokumentasi') }}
+                        </x-nav-link>
                     @endrole
                     @role('bendahara')
                         <x-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.*')">
@@ -43,6 +46,27 @@
                     @role('anggota')
                         <x-nav-link :href="route('anggota.dashboard')" :active="request()->routeIs('anggota.*')">
                             {{ __('Anggota') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('anggota.kegiatan.index')" :active="request()->routeIs('anggota.kegiatan.*')">
+                            {{ __('Kegiatan') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('anggota.pengumuman.index')" :active="request()->routeIs('anggota.pengumuman.*')">
+                            {{ __('Pengumuman') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('anggota.forum.index')" :active="request()->routeIs('anggota.forum.*')">
+                            {{ __('Forum') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('anggota.arsip.index')" :active="request()->routeIs('anggota.arsip.*')">
+                            {{ __('Arsip') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('anggota.dokumentasi.index')" :active="request()->routeIs('anggota.dokumentasi.*')">
+                            {{ __('Dokumentasi') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('anggota.iuran.tagihan.index')" :active="request()->routeIs('anggota.iuran.*')">
+                            {{ __('Iuran') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('anggota.laporan.index')" :active="request()->routeIs('anggota.laporan.*')">
+                            {{ __('Laporan') }}
                         </x-nav-link>
                     @endrole
                 </div>
@@ -119,6 +143,9 @@
                 <x-responsive-nav-link :href="route('admin.arsip.index')" :active="request()->routeIs('admin.arsip.*')">
                     {{ __('Arsip') }}
                 </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.dokumentasi.albums.index')" :active="request()->routeIs('admin.dokumentasi.albums.*')">
+                    {{ __('Dokumentasi') }}
+                </x-responsive-nav-link>
             @endrole
             @role('bendahara')
                 <x-responsive-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.*')">
@@ -128,6 +155,27 @@
             @role('anggota')
                 <x-responsive-nav-link :href="route('anggota.dashboard')" :active="request()->routeIs('anggota.*')">
                     {{ __('Anggota') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('anggota.kegiatan.index')" :active="request()->routeIs('anggota.kegiatan.*')">
+                    {{ __('Kegiatan') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('anggota.pengumuman.index')" :active="request()->routeIs('anggota.pengumuman.*')">
+                    {{ __('Pengumuman') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('anggota.forum.index')" :active="request()->routeIs('anggota.forum.*')">
+                    {{ __('Forum') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('anggota.arsip.index')" :active="request()->routeIs('anggota.arsip.*')">
+                    {{ __('Arsip') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('anggota.dokumentasi.index')" :active="request()->routeIs('anggota.dokumentasi.*')">
+                    {{ __('Dokumentasi') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('anggota.iuran.tagihan.index')" :active="request()->routeIs('anggota.iuran.*')">
+                    {{ __('Iuran') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('anggota.laporan.index')" :active="request()->routeIs('anggota.laporan.*')">
+                    {{ __('Laporan') }}
                 </x-responsive-nav-link>
             @endrole
         </div>
