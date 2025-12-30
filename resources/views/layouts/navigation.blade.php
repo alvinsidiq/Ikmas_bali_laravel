@@ -12,9 +12,6 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                        {{ __('Dashboard') }}
-                    </x-nav-link>
                     @role('admin')
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                             {{ __('Admin Dashboard') }}
@@ -37,15 +34,35 @@
                         <x-nav-link :href="route('admin.dokumentasi.albums.index')" :active="request()->routeIs('admin.dokumentasi.albums.*')">
                             {{ __('Dokumentasi') }}
                         </x-nav-link>
+                        @if(Route::has('bendahara.laporan.index'))
+                            <x-nav-link :href="route('bendahara.laporan.index')" :active="request()->routeIs('bendahara.laporan.*')">
+                                {{ __('Laporan') }}
+                            </x-nav-link>
+                        @endif
                     @endrole
                     @role('bendahara')
-                        <x-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.*')">
+                        <x-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.dashboard')">
                             {{ __('Bendahara') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('bendahara.iuran.dashboard')" :active="request()->routeIs('bendahara.iuran.*')">
+                            {{ __('Ringkasan Iuran') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('bendahara.tagihan.index')" :active="request()->routeIs('bendahara.tagihan.*')">
+                            {{ __('Tagihan') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('bendahara.pembayaran.index')" :active="request()->routeIs('bendahara.pembayaran.*')">
+                            {{ __('Pembayaran') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('bendahara.bulk.index')" :active="request()->routeIs('bendahara.bulk.*')">
+                            {{ __('Generate Massal') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('bendahara.laporan.index')" :active="request()->routeIs('bendahara.laporan.*')">
+                            {{ __('Laporan') }}
                         </x-nav-link>
                     @endrole
                     @role('anggota')
-                        <x-nav-link :href="route('anggota.dashboard')" :active="request()->routeIs('anggota.*')">
-                            {{ __('Anggota') }}
+                        <x-nav-link :href="route('anggota.home')" :active="request()->routeIs('anggota.home')">
+                            {{ __('Home') }}
                         </x-nav-link>
                         <x-nav-link :href="route('anggota.kegiatan.index')" :active="request()->routeIs('anggota.kegiatan.*')">
                             {{ __('Kegiatan') }}
@@ -62,9 +79,25 @@
                         <x-nav-link :href="route('anggota.dokumentasi.index')" :active="request()->routeIs('anggota.dokumentasi.*')">
                             {{ __('Dokumentasi') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('anggota.iuran.tagihan.index')" :active="request()->routeIs('anggota.iuran.*')">
-                            {{ __('Iuran') }}
-                        </x-nav-link>
+                        <x-dropdown align="left" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center gap-1 px-3 py-2 rounded-md text-sm font-medium {{ request()->routeIs('anggota.iuran.*') ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' }}">
+                                    {{ __('Keuangan') }}
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                                </button>
+                            </x-slot>
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('anggota.iuran.dashboard')" :active="request()->routeIs('anggota.iuran.dashboard')">
+                                    {{ __('Ringkasan Iuran') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('anggota.iuran.tagihan.index')" :active="request()->routeIs('anggota.iuran.tagihan.*')">
+                                    {{ __('Tagihan') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('anggota.iuran.dashboard') . '#pembayaran'" :active="false">
+                                    {{ __('Pembayaran') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
                         <x-nav-link :href="route('anggota.laporan.index')" :active="request()->routeIs('anggota.laporan.*')">
                             {{ __('Laporan') }}
                         </x-nav-link>
@@ -121,9 +154,6 @@
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
         <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
-            </x-responsive-nav-link>
             @role('admin')
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                     {{ __('Admin Dashboard') }}
@@ -146,15 +176,35 @@
                 <x-responsive-nav-link :href="route('admin.dokumentasi.albums.index')" :active="request()->routeIs('admin.dokumentasi.albums.*')">
                     {{ __('Dokumentasi') }}
                 </x-responsive-nav-link>
+                @if(Route::has('bendahara.laporan.index'))
+                    <x-responsive-nav-link :href="route('bendahara.laporan.index')" :active="request()->routeIs('bendahara.laporan.*')">
+                        {{ __('Laporan') }}
+                    </x-responsive-nav-link>
+                @endif
             @endrole
             @role('bendahara')
-                <x-responsive-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.*')">
+                <x-responsive-nav-link :href="route('bendahara.dashboard')" :active="request()->routeIs('bendahara.dashboard')">
                     {{ __('Bendahara') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('bendahara.iuran.dashboard')" :active="request()->routeIs('bendahara.iuran.*')">
+                    {{ __('Ringkasan Iuran') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('bendahara.tagihan.index')" :active="request()->routeIs('bendahara.tagihan.*')">
+                    {{ __('Tagihan') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('bendahara.pembayaran.index')" :active="request()->routeIs('bendahara.pembayaran.*')">
+                    {{ __('Pembayaran') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('bendahara.bulk.index')" :active="request()->routeIs('bendahara.bulk.*')">
+                    {{ __('Generate Massal') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('bendahara.laporan.index')" :active="request()->routeIs('bendahara.laporan.*')">
+                    {{ __('Laporan') }}
                 </x-responsive-nav-link>
             @endrole
             @role('anggota')
-                <x-responsive-nav-link :href="route('anggota.dashboard')" :active="request()->routeIs('anggota.*')">
-                    {{ __('Anggota') }}
+                <x-responsive-nav-link :href="route('anggota.home')" :active="request()->routeIs('anggota.home')">
+                    {{ __('Home') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('anggota.kegiatan.index')" :active="request()->routeIs('anggota.kegiatan.*')">
                     {{ __('Kegiatan') }}
@@ -171,9 +221,17 @@
                 <x-responsive-nav-link :href="route('anggota.dokumentasi.index')" :active="request()->routeIs('anggota.dokumentasi.*')">
                     {{ __('Dokumentasi') }}
                 </x-responsive-nav-link>
-                <x-responsive-nav-link :href="route('anggota.iuran.tagihan.index')" :active="request()->routeIs('anggota.iuran.*')">
-                    {{ __('Iuran') }}
-                </x-responsive-nav-link>
+                <div class="space-y-1">
+                    <x-responsive-nav-link :href="route('anggota.iuran.dashboard')" :active="request()->routeIs('anggota.iuran.dashboard')">
+                        {{ __('Keuangan - Ringkasan') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('anggota.iuran.tagihan.index')" :active="request()->routeIs('anggota.iuran.tagihan.*')">
+                        {{ __('Keuangan - Tagihan') }}
+                    </x-responsive-nav-link>
+                    <x-responsive-nav-link :href="route('anggota.iuran.dashboard') . '#pembayaran'" :active="false">
+                        {{ __('Keuangan - Pembayaran') }}
+                    </x-responsive-nav-link>
+                </div>
                 <x-responsive-nav-link :href="route('anggota.laporan.index')" :active="request()->routeIs('anggota.laporan.*')">
                     {{ __('Laporan') }}
                 </x-responsive-nav-link>

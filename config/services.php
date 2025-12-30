@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    'xendit' => [
+        'mode' => env('XENDIT_MODE', 'sandbox'),
+        'secret_key' => env('XENDIT_SECRET_KEY', env('XENDIT_API_KEY', '')),
+        'api_key' => env('XENDIT_API_KEY', env('XENDIT_SECRET_KEY', '')), // backward compatible
+        'base_url' => env('XENDIT_BASE_URL', 'https://api.xendit.co'),
+        'checkout_base' => env('XENDIT_CHECKOUT_BASE', 'https://checkout-staging.xendit.co'),
+        // Default pattern menggunakan endpoint v4 invoices pay page; override via env jika perlu.
+        'checkout_pattern' => env('XENDIT_CHECKOUT_PATTERN', 'https://checkout-staging.xendit.co/v4/invoices/%s/pay'),
+        'verify_ssl' => env('XENDIT_VERIFY_SSL', true),
+        'mock' => env('XENDIT_MOCK', false),
+        'webhook_token' => env('XENDIT_WEBHOOK_TOKEN', null),
+    ],
+
 ];

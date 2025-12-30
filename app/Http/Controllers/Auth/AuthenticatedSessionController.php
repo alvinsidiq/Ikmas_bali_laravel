@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
         $home = match (true) {
             $user->hasRole('admin') => route('admin.dashboard'),
             $user->hasRole('bendahara') => route('bendahara.dashboard'),
-            $user->hasRole('anggota') => (\Illuminate\Support\Facades\Route::has('anggota.kegiatan.index') ? route('anggota.kegiatan.index') : url('/')),
+            $user->hasRole('anggota') => route('home'),
             default => RouteServiceProvider::HOME,
         };
 

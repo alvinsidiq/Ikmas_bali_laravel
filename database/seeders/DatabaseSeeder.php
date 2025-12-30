@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             DokumentasiSeeder::class,
             LaporanSeeder::class,
             IuranSeeder::class,
+            SemesterSeeder::class,
         ]);
     }
 }

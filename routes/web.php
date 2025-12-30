@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\ForumPostController;
 use App\Http\Controllers\Admin\ArsipController;
 use App\Http\Controllers\Admin\DokumentasiAlbumController;
 use App\Http\Controllers\Admin\DokumentasiMediaController;
+use App\Http\Controllers\Admin\LaporanController as AdminLaporan;
+use App\Http\Controllers\Admin\SemesterController;
 use App\Http\Controllers\Anggota\KegiatanAnggotaController as AnggotaKegiatan;
 use App\Http\Controllers\Anggota\PengumumanAnggotaController as AnggotaPengumuman;
 use App\Http\Controllers\Anggota\ForumTopicController as AnggotaForum;
@@ -21,28 +23,33 @@ use App\Http\Controllers\Anggota\ArsipAnggotaController as AnggotaArsip;
 use App\Http\Controllers\Anggota\DokumentasiAnggotaController as AnggotaDokumentasi;
 use App\Http\Controllers\Anggota\LaporanController as AnggotaLaporan;
 use App\Http\Controllers\Anggota\IuranController as AnggotaIuran;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Bendahara\IuranDashboardController as BendIuranDashboard;
+use App\Http\Controllers\Bendahara\IuranTagihanController as BendTagihan;
+use App\Http\Controllers\Bendahara\IuranPembayaranController as BendPembayaran;
+use App\Http\Controllers\Bendahara\IuranBulkController as BendBulk;
+use App\Http\Controllers\Bendahara\IuranReportController as BendReport;
+use App\Http\Controllers\Webhook\XenditWebhookController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::view('/welcome', 'welcome')->name('welcome');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/', HomeController::class)->name('home');
+    Route::get('/dashboard', HomeController::class)->name('dashboard');
 
     // Admin
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function(){
         Route::get('/dashboard', [AdminDash::class, 'index'])->name('dashboard');
         Route::resource('anggota', AnggotaController::class);
-        Route::post('anggota/{anggota}/toggle-active', [AnggotaController::class,'toggleActive'])->name('anggota.toggle-active');
-        Route::post('anggota/{anggota}/reset-password', [AnggotaController::class,'resetPassword'])->name('anggota.reset-password');
+        Route::post('anggota/{anggotum}/toggle-active', [AnggotaController::class,'toggleActive'])->name('anggota.toggle-active');
+        Route::post('anggota/{anggotum}/reset-password', [AnggotaController::class,'resetPassword'])->name('anggota.reset-password');
         Route::resource('kegiatan', KegiatanController::class);
         Route::post('kegiatan/{kegiatan}/toggle-publish', [KegiatanController::class,'togglePublish'])->name('kegiatan.toggle-publish');
         Route::delete('kegiatan/{kegiatan}/poster', [KegiatanController::class,'removePoster'])->name('kegiatan.remove-poster');
         Route::resource('pengumuman', PengumumanController::class);
         Route::post('pengumuman/{pengumuman}/toggle-publish', [PengumumanController::class,'togglePublish'])->name('pengumuman.toggle-publish');
         Route::post('pengumuman/{pengumuman}/toggle-pin', [PengumumanController::class,'togglePin'])->name('pengumuman.toggle-pin');
+        Route::match(['post','get'],'pengumuman/{pengumuman}/email', [PengumumanController::class,'sendEmail'])->name('pengumuman.email');
         Route::delete('pengumuman/{pengumuman}/cover', [PengumumanController::class,'removeCover'])->name('pengumuman.remove-cover');
         // Topik
         Route::resource('forum', ForumTopicController::class);
@@ -72,15 +79,49 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('albums/{album}/media/{media}', [DokumentasiMediaController::class,'destroy'])->name('albums.media.destroy');
             Route::get('albums/{album}/media/{media}/download', [DokumentasiMediaController::class,'download'])->name('albums.media.download');
         });
+
+        // Laporan (view only)
+        Route::get('laporan', [AdminLaporan::class,'index'])->name('laporan.index');
+        Route::get('laporan/create', [AdminLaporan::class,'create'])->name('laporan.create');
+        Route::post('laporan', [AdminLaporan::class,'store'])->name('laporan.store');
+        Route::get('laporan/{laporan}', [AdminLaporan::class,'show'])->name('laporan.show');
+        Route::get('laporan/{laporan}/attachment/{attachment}/download', [AdminLaporan::class,'attachmentDownload'])->name('laporan.attachment.download');
+
+        Route::resource('semesters', SemesterController::class);
     });
 
     // Bendahara
     Route::prefix('bendahara')->name('bendahara.')->middleware('role:bendahara')->group(function(){
         Route::get('/dashboard', [BendDash::class, 'index'])->name('dashboard');
+        Route::get('/iuran', [BendIuranDashboard::class, 'index'])->name('iuran.dashboard');
+
+        Route::get('/iuran/tagihan/export', [BendTagihan::class, 'export'])->name('tagihan.export');
+        Route::resource('iuran/tagihan', BendTagihan::class)->names('tagihan');
+
+        Route::get('/iuran/pembayaran', [BendPembayaran::class, 'index'])->name('pembayaran.index');
+        Route::get('/iuran/pembayaran/{pembayaran}', [BendPembayaran::class, 'show'])->name('pembayaran.show');
+        Route::post('/iuran/pembayaran/{pembayaran}/verify', [BendPembayaran::class, 'verify'])->name('pembayaran.verify');
+        Route::post('/iuran/pembayaran/{pembayaran}/reject', [BendPembayaran::class, 'reject'])->name('pembayaran.reject');
+        Route::delete('/iuran/pembayaran/{pembayaran}', [BendPembayaran::class, 'destroy'])->name('pembayaran.destroy');
+
+        Route::get('/iuran/bulk', [BendBulk::class, 'index'])->name('bulk.index');
+        Route::post('/iuran/bulk', [BendBulk::class, 'generate'])->name('bulk.generate');
+
+        Route::get('/laporan', [BendReport::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/export', [BendReport::class, 'exportIndexCsv'])->name('laporan.export.index');
+        Route::get('/laporan/arus-kas', [BendReport::class, 'arusKas'])->name('laporan.arus');
+        Route::get('/laporan/arus-kas/export', [BendReport::class, 'exportArusCsv'])->name('laporan.export.arus');
+        Route::get('/laporan/piutang', [BendReport::class, 'piutang'])->name('laporan.piutang');
+        Route::get('/laporan/piutang/export', [BendReport::class, 'exportPiutangCsv'])->name('laporan.export.piutang');
+        Route::get('/laporan/anggota', [BendReport::class, 'anggotaIndex'])->name('laporan.anggota.index');
+        Route::get('/laporan/anggota/export', [BendReport::class, 'exportAnggotaCsv'])->name('laporan.export.anggota');
+        Route::get('/laporan/anggota/{user}', [BendReport::class, 'anggotaShow'])->name('laporan.anggota.show');
+        Route::get('/laporan/anggota/{user}/export', [BendReport::class, 'exportLedgerCsv'])->name('laporan.export.anggota-ledger');
     });
 
     // Anggota
     Route::prefix('anggota')->name('anggota.')->middleware('role:anggota')->group(function(){
+        Route::get('/home', function(){ return view('anggota.home'); })->name('home');
         Route::get('/dashboard', [AnggotaDash::class, 'index'])->name('dashboard');
         // Kegiatan (anggota)
         Route::get('kegiatan', [AnggotaKegiatan::class,'index'])->name('kegiatan.index');
@@ -117,33 +158,31 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         // Laporan (anggota)
         Route::get('laporan', [AnggotaLaporan::class,'index'])->name('laporan.index');
-        Route::get('laporan/create', [AnggotaLaporan::class,'create'])->name('laporan.create');
-        Route::post('laporan', [AnggotaLaporan::class,'store'])->name('laporan.store');
         Route::get('laporan/{laporan}', [AnggotaLaporan::class,'show'])->name('laporan.show');
-        Route::get('laporan/{laporan}/edit', [AnggotaLaporan::class,'edit'])->name('laporan.edit');
-        Route::put('laporan/{laporan}', [AnggotaLaporan::class,'update'])->name('laporan.update');
-        Route::delete('laporan/{laporan}', [AnggotaLaporan::class,'destroy'])->name('laporan.destroy');
-
-        Route::post('laporan/{laporan}/comment', [AnggotaLaporan::class,'addComment'])->name('laporan.comment');
-        Route::post('laporan/{laporan}/attachment', [AnggotaLaporan::class,'addAttachment'])->name('laporan.attachment.add');
-        Route::delete('laporan/{laporan}/attachment/{attachment}', [AnggotaLaporan::class,'removeAttachment'])->name('laporan.attachment.remove');
         Route::get('laporan/{laporan}/attachment/{attachment}/download', [AnggotaLaporan::class,'downloadAttachment'])->name('laporan.attachment.download');
-
-        Route::post('laporan/{laporan}/close', [AnggotaLaporan::class,'close'])->name('laporan.close');
 
         // Iuran (anggota)
         Route::get('iuran', [AnggotaIuran::class,'dashboard'])->name('iuran.dashboard');
         Route::get('iuran/tagihan', [AnggotaIuran::class,'tagihanIndex'])->name('iuran.tagihan.index');
         Route::get('iuran/tagihan/{tagihan}', [AnggotaIuran::class,'tagihanShow'])->name('iuran.tagihan.show');
+        Route::get('iuran/tagihan/{tagihan}/bayar', [AnggotaIuran::class,'bayarForm'])->name('iuran.tagihan.bayar.form');
         Route::post('iuran/tagihan/{tagihan}/bayar', [AnggotaIuran::class,'bayar'])->name('iuran.tagihan.bayar');
         Route::get('iuran/pembayaran/{pembayaran}/bukti', [AnggotaIuran::class,'buktiDownload'])->name('iuran.pembayaran.bukti');
+        Route::get('iuran/pembayaran/{pembayaran}/sandbox', [AnggotaIuran::class,'sandboxCheckout'])->name('iuran.pembayaran.sandbox');
         Route::delete('iuran/pembayaran/{pembayaran}', [AnggotaIuran::class,'hapusPembayaran'])->name('iuran.pembayaran.destroy');
         Route::get('iuran/pembayaran/{pembayaran}/receipt', [AnggotaIuran::class,'receipt'])->name('iuran.pembayaran.receipt');
+        Route::get('iuran/pembayaran/{pembayaran}/gateway/sukses', [AnggotaIuran::class,'gatewaySuccess'])->name('iuran.gateway.success');
+        Route::get('iuran/pembayaran/{pembayaran}/gateway/batal', [AnggotaIuran::class,'gatewayCancel'])->name('iuran.gateway.cancel');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Webhook Xendit (tanpa auth, disable CSRF)
+Route::post('/webhook/xendit', XenditWebhookController::class)
+    ->name('webhook.xendit')
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
 
 require __DIR__.'/auth.php';
