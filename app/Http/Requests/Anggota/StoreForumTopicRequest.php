@@ -12,7 +12,7 @@ class StoreForumTopicRequest extends FormRequest
             'judul' => ['required','string','max:255'],
             'kategori' => ['nullable','string','max:100'],
             'body' => ['nullable','string'],
-            'banner_url' => ['nullable','url','max:500'],
+            'banner' => ['nullable','image','max:3072'],
         ];
     }
 }

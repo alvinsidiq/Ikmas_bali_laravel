@@ -4,9 +4,11 @@
       @if(session($k))<div class="mb-4 p-3 bg-{{ $c }}-100 border border-{{ $c }}-300 rounded">{{ session($k) }}</div>@endif
     @endforeach
 
+    @php($bannerUrl = \App\Support\MediaPath::url($topic->banner_url))
     <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
       @if($topic->banner_url)
-        <div class="relative h-56 md:h-64">
+        <div class="relative h-56 md:h-64 {{ $bannerUrl ? 'cursor-zoom-in' : '' }}"
+             @if($bannerUrl) @click="$dispatch('open-image', {src: @js($bannerUrl), alt: @js('Banner '.$topic->judul)})" @endif>
           <x-media-img :src="$topic->banner_url" class="w-full h-full object-cover" alt="banner {{ $topic->judul }}" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent"></div>
           <div class="absolute bottom-4 left-4 right-4 text-white">

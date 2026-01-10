@@ -1,6 +1,6 @@
 <x-anggota-layout title="Buat Topik" subtitle="Tulis topik baru">
   <div class="bg-white shadow rounded p-6">
-    <form method="POST" action="{{ route('anggota.forum.store') }}">
+    <form method="POST" action="{{ route('anggota.forum.store') }}" enctype="multipart/form-data">
       @csrf
       <div class="grid gap-4">
         <div>
@@ -13,9 +13,10 @@
           <x-text-input id="kategori" name="kategori" type="text" class="mt-1 block w-full" />
         </div>
         <div>
-          <x-input-label for="banner_url" value="Gambar Banner (URL)" />
-          <x-text-input id="banner_url" name="banner_url" type="url" placeholder="https://..." class="mt-1 block w-full" :value="old('banner_url')" />
-          <x-input-error :messages="$errors->get('banner_url')" class="mt-2" />
+          <x-input-label for="banner" value="Gambar Banner" />
+          <input id="banner" name="banner" type="file" accept="image/*" class="mt-1 block w-full" />
+          <p class="text-xs text-gray-500 mt-1">Format gambar umum, maks 3MB.</p>
+          <x-input-error :messages="$errors->get('banner')" class="mt-2" />
         </div>
         <div>
           <x-input-label for="body" value="Konten Pembuka" />

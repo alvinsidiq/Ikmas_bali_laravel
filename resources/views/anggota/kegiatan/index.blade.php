@@ -40,8 +40,10 @@
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       @forelse($items as $k)
+      @php($posterUrl = \App\Support\MediaPath::url($k->poster_path))
       <div class="bg-white shadow rounded-xl overflow-hidden border border-gray-100">
-        <div class="relative h-40 bg-gray-100">
+        <div class="relative h-40 bg-gray-100 {{ $posterUrl ? 'cursor-zoom-in' : '' }}"
+             @if($posterUrl) @click="$dispatch('open-image', {src: @js($posterUrl), alt: @js('Poster '.$k->judul)})" @endif>
           <x-media-img :src="$k->poster_path" class="w-full h-full object-cover" alt="Poster {{ $k->judul }}" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
           <div class="absolute top-2 left-2 flex gap-2">

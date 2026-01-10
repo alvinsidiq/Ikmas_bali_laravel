@@ -12,8 +12,10 @@
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
       @forelse($albums as $a)
+      @php($coverUrl = \App\Support\MediaPath::url($a->cover_path))
       <div class="bg-white shadow rounded-xl overflow-hidden border border-gray-100">
-        <div class="relative h-44 bg-gray-100">
+        <div class="relative h-44 bg-gray-100 {{ $coverUrl ? 'cursor-zoom-in' : '' }}"
+             @if($coverUrl) @click="$dispatch('open-image', {src: @js($coverUrl), alt: @js('Cover '.$a->judul)})" @endif>
           <x-media-img :src="$a->cover_path" class="w-full h-full object-cover" alt="cover {{ $a->judul }}" />
           <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
           <div class="absolute top-2 left-2 flex gap-2">

@@ -3,8 +3,10 @@
     @if(session('success'))<div class="mb-4 p-3 bg-green-100 border border-green-300 rounded">{{ session('success') }}</div>@endif
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
       @forelse($items as $k)
+      @php($posterUrl = \App\Support\MediaPath::url($k->poster_path))
       <div class="bg-white shadow rounded overflow-hidden">
-        <x-media-img :src="$k->poster_path" class="w-full h-40 object-cover" alt="Poster {{ $k->judul }}" />
+        <x-media-img :src="$k->poster_path" class="w-full h-40 object-cover {{ $posterUrl ? 'cursor-zoom-in' : '' }}" alt="Poster {{ $k->judul }}"
+          @if($posterUrl) @click="$dispatch('open-image', {src: @js($posterUrl), alt: @js('Poster '.$k->judul)})" @endif />
         <div class="p-4">
           <h3 class="font-semibold text-lg"><a class="hover:underline" href="{{ route('anggota.kegiatan.show',$k->slug) }}">{{ $k->judul }}</a></h3>
           <div class="text-sm text-gray-600">{{ $k->lokasi ?? '-' }}</div>

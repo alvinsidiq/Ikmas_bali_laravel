@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ForumTopic;
 use App\Models\ForumPost;
+use App\Support\MediaPath;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -38,15 +39,20 @@ class ForumTopicController extends Controller
         $data = $request->validate([
             'judul' => ['required','string','max:255'],
             'kategori' => ['nullable','string','max:100'],
-            'banner_url' => ['nullable','url','max:500'],
+            'banner' => ['nullable','image','max:3072'],
             'body' => ['nullable','string'],
             'is_pinned' => ['nullable','boolean'],
         ]);
+        $banner = $request->file('banner');
+        unset($data['banner']);
 
         $t = new ForumTopic($data);
         $t->author_id = Auth::id();
         $t->is_open = true;
         $t->last_post_at = now();
+        if ($banner) {
+            $t->banner_url = $banner->store('forum/banners','public');
+        }
         $t->save();
 
         // Jika ada body pembuka, simpan juga sebagai post pertama oleh admin
@@ -76,11 +82,17 @@ class ForumTopicController extends Controller
         $data = $request->validate([
             'judul' => ['required','string','max:255'],
             'kategori' => ['nullable','string','max:100'],
-            'banner_url' => ['nullable','url','max:500'],
+            'banner' => ['nullable','image','max:3072'],
             'body' => ['nullable','string'],
             'is_pinned' => ['nullable','boolean'],
         ]);
+        $banner = $request->file('banner');
+        unset($data['banner']);
         $forum->fill($data);
+        if ($banner) {
+            MediaPath::deleteIfLocal($forum->banner_url);
+            $forum->banner_url = $banner->store('forum/banners','public');
+        }
         $forum->save();
         return redirect()->route('admin.forum.index')->with('success','Topik diperbarui');
     }
