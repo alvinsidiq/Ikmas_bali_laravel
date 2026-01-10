@@ -14,9 +14,9 @@ class KegiatanAnggotaController extends Controller
     {
         $q = trim((string)$request->get('q'));
         $w = $request->get('w'); // upcoming|past|null
+        $status = $request->get('status'); // published|draft|null
 
         $items = Kegiatan::query()
-            ->published()
             ->when($q, function($qr) use ($q){
                 $qr->where('judul','like',"%$q%")
                    ->orWhere('lokasi','like',"%$q%")
@@ -24,6 +24,8 @@ class KegiatanAnggotaController extends Controller
             })
             ->when($w === 'upcoming', fn($qr)=>$qr->where('waktu_mulai','>=', now()))
             ->when($w === 'past', fn($qr)=>$qr->where('waktu_mulai','<', now()))
+            ->when($status === 'published', fn($qr)=>$qr->where('is_published', true))
+            ->when($status === 'draft', fn($qr)=>$qr->where('is_published', false))
             ->when(Schema::hasTable('kegiatan_user'), fn($qr)=>$qr->withCount('participants'))
             ->orderBy('waktu_mulai')
             ->paginate(12)
@@ -33,7 +35,7 @@ class KegiatanAnggotaController extends Controller
             ? Auth::user()->kegiatanDiikuti()->pluck('kegiatans.id')->toArray()
             : [];
 
-        return view('anggota.kegiatan.index', compact('items','q','w','mine'));
+        return view('anggota.kegiatan.index', compact('items','q','w','status','mine'));
     }
 
     public function mine(Request $request)
@@ -53,7 +55,6 @@ class KegiatanAnggotaController extends Controller
 
     public function show(Kegiatan $kegiatan)
     {
-        abort_unless($kegiatan->is_published, 404);
         $user = Auth::user();
         $pivot = Schema::hasTable('kegiatan_user')
             ? $user->kegiatanDiikuti()->where('kegiatan_id',$kegiatan->id)->first()?->pivot
@@ -63,7 +64,9 @@ class KegiatanAnggotaController extends Controller
 
     public function register(Kegiatan $kegiatan)
     {
-        abort_unless($kegiatan->is_published, 404);
+        if (!$kegiatan->is_published) {
+            return back()->with('error','Kegiatan belum dipublish. Tunggu info resmi dari pengurus.');
+        }
         if (!Schema::hasTable('kegiatan_user')) {
             return back()->with('error','Fitur pendaftaran belum siap. Jalankan migrasi terlebih dahulu.');
         }
@@ -85,7 +88,6 @@ class KegiatanAnggotaController extends Controller
 
     public function unregister(Kegiatan $kegiatan)
     {
-        abort_unless($kegiatan->is_published, 404);
         if (!Schema::hasTable('kegiatan_user')) {
             return back()->with('error','Fitur pendaftaran belum siap. Jalankan migrasi terlebih dahulu.');
         }
@@ -97,8 +99,6 @@ class KegiatanAnggotaController extends Controller
 
     public function ics(Kegiatan $kegiatan)
     {
-        abort_unless($kegiatan->is_published, 404);
-
         $start = optional($kegiatan->waktu_mulai)?->copy()->utc()->format('Ymd\THis\Z');
         $end = optional($kegiatan->waktu_selesai ?? $kegiatan->waktu_mulai?->copy()->addHours(1))?->copy()->utc()->format('Ymd\THis\Z');
         $uid = 'kegiatan-'.$kegiatan->id.'@app.local';

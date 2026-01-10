@@ -23,6 +23,14 @@
             <option value="past" @selected($w==='past')>Selesai</option>
           </select>
         </div>
+        <div>
+          <label class="text-xs text-gray-600">Status</label>
+          <select name="status" class="w-full border-gray-300 rounded-md">
+            <option value="">Semua</option>
+            <option value="published" @selected($status==='published')>Published</option>
+            <option value="draft" @selected($status==='draft')>Draft</option>
+          </select>
+        </div>
         <div class="sm:col-span-2 lg:col-span-1 flex gap-2">
           <x-primary-button class="w-full sm:w-auto">Filter</x-primary-button>
           <a href="{{ route('anggota.kegiatan.mine') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">Kegiatan Saya</a>
@@ -38,6 +46,9 @@
           <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
           <div class="absolute top-2 left-2 flex gap-2">
             <span class="px-2 py-0.5 text-xs rounded-full bg-white/90 text-gray-700">{{ optional($k->waktu_mulai)->format('d M Y') }}</span>
+            @if(!$k->is_published)
+              <span class="px-2 py-0.5 text-xs rounded-full bg-amber-100 text-amber-700">Draft</span>
+            @endif
             @if(optional($k->waktu_mulai)->isFuture())
               <span class="px-2 py-0.5 text-xs rounded-full bg-emerald-100 text-emerald-700">Upcoming</span>
             @else
@@ -58,9 +69,12 @@
             <a href="{{ route('anggota.kegiatan.show',$k->slug) }}" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded">Detail</a>
             @php($joined = in_array($k->id, $mine))
             @php($closed = optional($k->waktu_mulai)->isPast())
+            @php($isPublished = (bool) $k->is_published)
             @if($joined)
               <span class="px-3 py-1.5 bg-slate-200 rounded text-sm">Sudah terdaftar</span>
               <a href="{{ route('anggota.kegiatan.mine') }}" class="px-3 py-1.5 bg-white border border-slate-200 rounded text-sm">Lihat daftar saya</a>
+            @elseif(!$isPublished)
+              <span class="px-3 py-1.5 bg-amber-50 text-amber-700 rounded text-sm">Belum dipublish</span>
             @elseif($closed)
               <span class="px-3 py-1.5 bg-red-50 text-red-700 rounded text-sm">Pendaftaran ditutup</span>
             @else

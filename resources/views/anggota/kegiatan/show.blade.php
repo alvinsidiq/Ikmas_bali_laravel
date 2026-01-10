@@ -14,6 +14,11 @@
               {{ optional($kegiatan->waktu_mulai)->format('d M Y H:i') }}
               @if($kegiatan->waktu_selesai) - {{ optional($kegiatan->waktu_selesai)->format('H:i') }} @endif
             </span>
+            @if(!$kegiatan->is_published)
+              <span class="inline-flex items-center px-3 py-1 rounded-full bg-amber-100/90 text-amber-800 font-semibold">
+                Draft
+              </span>
+            @endif
             <span class="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100/90 text-emerald-800 font-semibold">
               {{ optional($kegiatan->waktu_mulai)->isFuture() ? 'Akan datang' : 'Selesai' }}
             </span>
@@ -46,7 +51,10 @@
         <div class="flex flex-wrap gap-3">
           <a href="{{ route('anggota.kegiatan.ics',$kegiatan) }}" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-500">Add to Calendar</a>
           @php($closed = optional($kegiatan->waktu_mulai)->isPast())
-          @if(!$pivot && !$closed)
+          @php($isPublished = (bool) $kegiatan->is_published)
+          @if(!$isPublished)
+            <span class="px-4 py-2 rounded-lg bg-amber-50 text-amber-700">Kegiatan belum dipublish</span>
+          @elseif(!$pivot && !$closed)
             <form method="POST" action="{{ route('anggota.kegiatan.register', ['kegiatan' => $kegiatan->id]) }}">@csrf<button class="px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-500">Daftar</button></form>
           @elseif($pivot)
             <form method="POST" action="{{ route('anggota.kegiatan.unregister',$kegiatan) }}" onsubmit="return confirm('Batalkan pendaftaran?')">@csrf @method('DELETE')<button class="px-4 py-2 rounded-lg bg-red-100 text-red-700 hover:bg-red-200">Batal</button></form>
