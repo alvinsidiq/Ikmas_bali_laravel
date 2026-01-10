@@ -29,6 +29,16 @@ class IuranPembayaranController extends Controller
     public function show(IuranPembayaran $pembayaran)
     { $pembayaran->load(['user','tagihan']); return view('bendahara.iuran.pembayaran.show', compact('pembayaran')); }
 
+    public function buktiShow(IuranPembayaran $pembayaran)
+    {
+        abort_unless($pembayaran->bukti_path && Storage::disk('public')->exists($pembayaran->bukti_path), 404);
+        return Storage::disk('public')->response(
+            $pembayaran->bukti_path,
+            basename($pembayaran->bukti_path),
+            [ 'Content-Type' => $pembayaran->bukti_mime ?? 'application/octet-stream' ]
+        );
+    }
+
     public function verify(VerifyOrRejectPembayaranRequest $request, IuranPembayaran $pembayaran, IuranStatusService $svc)
     {
         if ($pembayaran->status === 'verified') return back()->with('info','Sudah diverifikasi.');

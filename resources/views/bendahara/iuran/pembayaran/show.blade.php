@@ -26,9 +26,22 @@
       </div>
       <div>
         @if($pembayaran->bukti_path)
+          @php($buktiUrl = route('bendahara.pembayaran.bukti', $pembayaran))
+          @php($buktiMime = $pembayaran->bukti_mime ?? '')
+          @php($isImage = \Illuminate\Support\Str::startsWith($buktiMime, 'image/'))
+          @php($isPdf = \Illuminate\Support\Str::contains($buktiMime, 'pdf') || \Illuminate\Support\Str::endsWith((string)$pembayaran->bukti_path, '.pdf'))
           <div class="font-semibold mb-2">Bukti Pembayaran</div>
-          <a class="text-blue-600" href="{{ Storage::disk('public')->url($pembayaran->bukti_path) }}" target="_blank">Lihat / Unduh</a>
+          <a class="text-blue-600" href="{{ $buktiUrl }}" target="_blank">Lihat / Unduh</a>
           <div class="text-xs text-gray-500 mt-1">{{ $pembayaran->bukti_mime }} • {{ number_format(($pembayaran->bukti_size ?? 0)/1024,1) }} KB</div>
+          @if($isImage)
+            <div class="mt-3">
+              <img src="{{ $buktiUrl }}" alt="Bukti pembayaran {{ $pembayaran->kode }}" class="max-h-96 rounded border border-slate-200 shadow-sm" />
+            </div>
+          @elseif($isPdf)
+            <div class="mt-3">
+              <iframe src="{{ $buktiUrl }}" class="w-full h-96 border border-slate-200 rounded"></iframe>
+            </div>
+          @endif
         @else
           <div class="text-gray-500">Tidak ada bukti diunggah.</div>
         @endif
