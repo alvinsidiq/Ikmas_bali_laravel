@@ -1,7 +1,9 @@
 <x-anggota-layout :title="$album->judul" subtitle="Album dokumentasi">
   <div class="space-y-6">
+    @php($coverUrl = \App\Support\MediaPath::url($album->cover_path))
     <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
-      <div class="relative h-56 md:h-64 bg-slate-100">
+      <div class="relative h-56 md:h-64 bg-slate-100 {{ $coverUrl ? 'cursor-zoom-in' : '' }}"
+           @if($coverUrl) @click="$dispatch('open-image', {src: @js($coverUrl), alt: @js('Cover '.$album->judul)})" @endif>
         <x-media-img :src="$album->cover_path" class="w-full h-full object-cover" alt="cover {{ $album->judul }}" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent"></div>
         <div class="absolute bottom-4 left-4 right-4 text-white">
@@ -40,9 +42,9 @@
             @php($mediaUrl = \App\Support\MediaPath::url($m->media_path))
             <div class="border rounded-xl overflow-hidden shadow-sm">
               @if($mediaUrl)
-                <a href="{{ $mediaUrl }}" target="_blank">
-                  <x-media-img :src="$m->media_path" class="w-full h-44 object-cover" alt="foto {{ $m->caption }}" />
-                </a>
+                <button type="button" class="block w-full text-left" @click="$dispatch('open-image', {src: @js($mediaUrl), alt: @js($m->caption ?: 'Media')})">
+                  <x-media-img :src="$m->media_path" class="w-full h-44 object-cover cursor-zoom-in" alt="foto {{ $m->caption }}" />
+                </button>
               @else
                 <x-media-img :src="$m->media_path" class="w-full h-44 object-cover" alt="foto {{ $m->caption }}" />
               @endif

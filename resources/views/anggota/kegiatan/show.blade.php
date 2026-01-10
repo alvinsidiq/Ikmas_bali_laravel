@@ -4,8 +4,10 @@
     @if(session('error'))<div class="mb-4 p-3 bg-red-100 border border-red-300 rounded">{{ session('error') }}</div>@endif
     @if(session('info'))<div class="mb-4 p-3 bg-amber-100 border border-amber-300 rounded">{{ session('info') }}</div>@endif
 
+    @php($posterUrl = \App\Support\MediaPath::url($kegiatan->poster_path))
     <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
-      <div class="relative h-60 md:h-72 bg-slate-100">
+      <div class="relative h-60 md:h-72 bg-slate-100 {{ $posterUrl ? 'cursor-zoom-in' : '' }}"
+           @if($posterUrl) @click="$dispatch('open-image', {src: @js($posterUrl), alt: @js('Poster '.$kegiatan->judul)})" @endif>
         <x-media-img :src="$kegiatan->poster_path" class="w-full h-full object-cover" alt="Poster {{ $kegiatan->judul }}" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent"></div>
         <div class="absolute bottom-4 left-4 right-4 text-white">

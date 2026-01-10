@@ -6,6 +6,7 @@ use App\Http\Requests\Anggota\StoreForumTopicRequest;
 use App\Http\Requests\Anggota\UpdateForumTopicRequest;
 use App\Models\ForumTopic;
 use App\Models\ForumPost;
+use App\Support\MediaPath;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,9 +41,14 @@ class ForumTopicController extends Controller
     public function store(StoreForumTopicRequest $request)
     {
         $data = $request->validated();
+        $banner = $request->file('banner');
+        unset($data['banner']);
         $t = new ForumTopic($data);
         $t->author_id = Auth::id();
         $t->is_open = true; $t->is_pinned = false; $t->last_post_at = now();
+        if ($banner) {
+            $t->banner_url = $banner->store('forum/banners','public');
+        }
         $t->save();
 
         if (!empty($data['body'])) {
@@ -72,7 +78,14 @@ class ForumTopicController extends Controller
     public function update(UpdateForumTopicRequest $request, ForumTopic $forum)
     {
         abort_unless($forum->author_id === Auth::id(), 403);
-        $forum->fill($request->validated());
+        $data = $request->validated();
+        $banner = $request->file('banner');
+        unset($data['banner']);
+        $forum->fill($data);
+        if ($banner) {
+            MediaPath::deleteIfLocal($forum->banner_url);
+            $forum->banner_url = $banner->store('forum/banners','public');
+        }
         $forum->save();
         return redirect()->route('anggota.forum.show',$forum)->with('success','Topik diperbarui');
     }
@@ -91,4 +104,3 @@ class ForumTopicController extends Controller
         return back()->with('success','Status open/closed diperbarui');
     }
 }
-

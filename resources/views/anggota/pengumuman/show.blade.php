@@ -1,7 +1,9 @@
 <x-anggota-layout :title="$pengumuman->judul">
   <div class="space-y-6">
+    @php($coverUrl = \App\Support\MediaPath::url($pengumuman->cover_path))
     <div class="overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
-      <div class="relative h-56 md:h-72 bg-slate-100">
+      <div class="relative h-56 md:h-72 bg-slate-100 {{ $coverUrl ? 'cursor-zoom-in' : '' }}"
+           @if($coverUrl) @click="$dispatch('open-image', {src: @js($coverUrl), alt: @js('Cover '.$pengumuman->judul)})" @endif>
         <x-media-img :src="$pengumuman->cover_path" class="w-full h-full object-cover" alt="Cover {{ $pengumuman->judul }}" />
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
         <div class="absolute bottom-4 left-4 right-4 text-white">

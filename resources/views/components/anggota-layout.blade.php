@@ -185,5 +185,21 @@
         </div>
       </footer>
     </div>
+
+    <div
+      x-data="{ open:false, src:'', alt:'' }"
+      x-init="$watch('open', value => document.body.classList.toggle('overflow-y-hidden', value))"
+      x-on:open-image.window="src = $event.detail.src || ''; alt = $event.detail.alt || ''; open = !!src"
+      x-on:keydown.escape.window="open = false"
+      x-show="open"
+      style="display: none;"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
+      <div class="absolute inset-0 bg-black/70" @click="open = false"></div>
+      <div class="relative w-full max-w-6xl">
+        <button type="button" class="absolute -top-3 -right-3 rounded-full bg-white/90 px-2 py-1 text-gray-700 shadow hover:bg-white" @click="open = false">x</button>
+        <img :src="src" :alt="alt" class="w-full max-h-[85vh] object-contain rounded-xl bg-white shadow-2xl" />
+      </div>
+    </div>
   </body>
 </html>

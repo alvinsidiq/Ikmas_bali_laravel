@@ -23,9 +23,11 @@
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
       @forelse($topics as $t)
+      @php($bannerUrl = \App\Support\MediaPath::url($t->banner_url))
       <div class="bg-white shadow rounded p-4 flex flex-col gap-2">
         @if($t->banner_url)
-          <div class="-mx-4 -mt-4 mb-2 h-32 overflow-hidden rounded-t">
+          <div class="-mx-4 -mt-4 mb-2 h-32 overflow-hidden rounded-t {{ $bannerUrl ? 'cursor-zoom-in' : '' }}"
+               @if($bannerUrl) @click="$dispatch('open-image', {src: @js($bannerUrl), alt: @js('Banner '.$t->judul)})" @endif>
             <x-media-img :src="$t->banner_url" class="w-full h-full object-cover" alt="banner {{ $t->judul }}" />
           </div>
         @endif
