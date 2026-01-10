@@ -34,7 +34,20 @@
                 <div class="text-xs text-red-700">Ditolak: {{ $p->rejection_reason }}</div>
               @endif
               @if($p->bukti_path)
-                <a class="text-xs text-blue-600" href="{{ Storage::disk('public')->url($p->bukti_path) }}" target="_blank">Lihat Bukti</a>
+                @php($buktiUrl = route('bendahara.pembayaran.bukti', $p))
+                @php($buktiMime = $p->bukti_mime ?? '')
+                @php($isImage = \Illuminate\Support\Str::startsWith($buktiMime, 'image/'))
+                @php($isPdf = \Illuminate\Support\Str::contains($buktiMime, 'pdf') || \Illuminate\Support\Str::endsWith((string)$p->bukti_path, '.pdf'))
+                <div class="mt-1 flex items-center gap-2">
+                  <a class="text-xs text-blue-600" href="{{ $buktiUrl }}" target="_blank">Lihat Bukti</a>
+                  @if($isImage)
+                    <a href="{{ $buktiUrl }}" target="_blank">
+                      <img src="{{ $buktiUrl }}" alt="Bukti {{ $p->kode }}" class="h-14 w-14 object-cover rounded border border-slate-200" />
+                    </a>
+                  @elseif($isPdf)
+                    <span class="text-xs text-gray-500">PDF</span>
+                  @endif
+                </div>
               @endif
             </div>
             <div class="text-right space-y-2">

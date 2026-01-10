@@ -78,7 +78,7 @@ class IuranController extends Controller
     public function tagihanShow(IuranTagihan $tagihan)
     {
         abort_unless($tagihan->user_id === Auth::id(), 403);
-        $tagihan->load(['payments' => fn($q)=>$q->whereIn('status',['verified','rejected'])->latest('id')]);
+        $tagihan->load(['payments' => fn($q)=>$q->whereIn('status',['verified','rejected','submitted','pending_gateway'])->latest('id')]);
         $bank = config('iuran');
         return view('anggota.iuran.tagihan.show', compact('tagihan','bank'));
     }
@@ -185,6 +185,17 @@ class IuranController extends Controller
         abort_unless($pembayaran->user_id === Auth::id(), 403);
         abort_unless($pembayaran->bukti_path && Storage::disk('public')->exists($pembayaran->bukti_path), 404);
         return Storage::disk('public')->download($pembayaran->bukti_path, basename($pembayaran->bukti_path), [ 'Content-Type' => $pembayaran->bukti_mime ?? 'application/octet-stream' ]);
+    }
+
+    public function buktiShow(IuranPembayaran $pembayaran)
+    {
+        abort_unless($pembayaran->user_id === Auth::id(), 403);
+        abort_unless($pembayaran->bukti_path && Storage::disk('public')->exists($pembayaran->bukti_path), 404);
+        return Storage::disk('public')->response(
+            $pembayaran->bukti_path,
+            basename($pembayaran->bukti_path),
+            [ 'Content-Type' => $pembayaran->bukti_mime ?? 'application/octet-stream' ]
+        );
     }
 
     public function sandboxCheckout(IuranPembayaran $pembayaran)

@@ -100,6 +100,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/iuran/pembayaran', [BendPembayaran::class, 'index'])->name('pembayaran.index');
         Route::get('/iuran/pembayaran/{pembayaran}', [BendPembayaran::class, 'show'])->name('pembayaran.show');
+        Route::get('/iuran/pembayaran/{pembayaran}/bukti', [BendPembayaran::class, 'buktiShow'])->name('pembayaran.bukti');
         Route::post('/iuran/pembayaran/{pembayaran}/verify', [BendPembayaran::class, 'verify'])->name('pembayaran.verify');
         Route::post('/iuran/pembayaran/{pembayaran}/reject', [BendPembayaran::class, 'reject'])->name('pembayaran.reject');
         Route::delete('/iuran/pembayaran/{pembayaran}', [BendPembayaran::class, 'destroy'])->name('pembayaran.destroy');
@@ -168,6 +169,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('iuran/tagihan/{tagihan}/bayar', [AnggotaIuran::class,'bayarForm'])->name('iuran.tagihan.bayar.form');
         Route::post('iuran/tagihan/{tagihan}/bayar', [AnggotaIuran::class,'bayar'])->name('iuran.tagihan.bayar');
         Route::get('iuran/pembayaran/{pembayaran}/bukti', [AnggotaIuran::class,'buktiDownload'])->name('iuran.pembayaran.bukti');
+        Route::get('iuran/pembayaran/{pembayaran}/bukti/view', [AnggotaIuran::class,'buktiShow'])->name('iuran.pembayaran.bukti.view');
         Route::get('iuran/pembayaran/{pembayaran}/sandbox', [AnggotaIuran::class,'sandboxCheckout'])->name('iuran.pembayaran.sandbox');
         Route::delete('iuran/pembayaran/{pembayaran}', [AnggotaIuran::class,'hapusPembayaran'])->name('iuran.pembayaran.destroy');
         Route::get('iuran/pembayaran/{pembayaran}/receipt', [AnggotaIuran::class,'receipt'])->name('iuran.pembayaran.receipt');

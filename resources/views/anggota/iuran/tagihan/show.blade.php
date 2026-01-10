@@ -114,6 +114,18 @@
       <div class="divide-y">
         @forelse($tagihan->payments as $p)
           @php($isSuccess = $p->status === 'verified')
+          @php($statusBadge = [
+            'submitted'=>'bg-amber-100 text-amber-700',
+            'pending_gateway'=>'bg-blue-100 text-blue-700',
+            'verified'=>'bg-emerald-100 text-emerald-700',
+            'rejected'=>'bg-red-100 text-red-700',
+          ][$p->status] ?? 'bg-gray-100 text-gray-700')
+          @php($statusLabel = [
+            'submitted'=>'Menunggu Verifikasi',
+            'pending_gateway'=>'Menunggu Gateway',
+            'verified'=>'Berhasil',
+            'rejected'=>'Ditolak',
+          ][$p->status] ?? ucfirst(str_replace('_',' ',$p->status)))
           <div class="py-2 flex items-start justify-between">
             <div>
               <div class="font-medium">{{ $p->kode }} — Rp {{ number_format($p->amount,0,',','.') }}</div>
@@ -124,18 +136,37 @@
                 <div class="text-xs text-red-700">Ditolak: {{ $p->rejection_reason }}</div>
               @endif
               @if($p->bukti_path)
-                <a class="text-xs text-blue-600" href="{{ route('anggota.iuran.pembayaran.bukti',$p) }}">Download Bukti</a>
+                @php($buktiUrl = route('anggota.iuran.pembayaran.bukti.view',$p))
+                @php($buktiMime = $p->bukti_mime ?? '')
+                @php($isImage = \Illuminate\Support\Str::startsWith($buktiMime, 'image/'))
+                @php($isPdf = \Illuminate\Support\Str::contains($buktiMime, 'pdf') || \Illuminate\Support\Str::endsWith((string)$p->bukti_path, '.pdf'))
+                <div class="mt-1 flex items-center gap-2">
+                  <a class="text-xs text-blue-600" href="{{ route('anggota.iuran.pembayaran.bukti',$p) }}">Download Bukti</a>
+                  <a class="text-xs text-blue-600" href="{{ $buktiUrl }}" target="_blank">Lihat Bukti</a>
+                </div>
+                @if($isImage)
+                  <div class="mt-2">
+                    <img src="{{ $buktiUrl }}" alt="Bukti {{ $p->kode }}" class="h-20 w-20 object-cover rounded border border-slate-200 cursor-zoom-in"
+                      @click="$dispatch('open-image', {src: @js($buktiUrl), alt: @js('Bukti '.$p->kode)})" />
+                  </div>
+                @elseif($isPdf)
+                  <div class="mt-2 text-xs text-gray-500">Bukti berupa PDF.</div>
+                @endif
               @endif
               @if($p->gateway_receipt_url)
                 <a class="text-xs text-blue-600" href="{{ $p->gateway_receipt_url }}" target="_blank">Bukti Xendit</a>
               @endif
-              <div class="text-xs text-gray-500">Status: {{ strtoupper($p->status_pembayaran ?? ($isSuccess ? 'PAID' : 'FAILED')) }}</div>
+              @php($statusPay = $p->status_pembayaran ?? ([
+                'verified' => 'PAID',
+                'rejected' => 'FAILED',
+                'submitted' => 'PENDING',
+                'pending_gateway' => 'PENDING',
+              ][$p->status] ?? 'PENDING'))
+              <div class="text-xs text-gray-500">Status: {{ strtoupper($statusPay) }}</div>
             </div>
             <div class="text-right space-y-2">
               <div>
-                <span class="px-2 py-1 text-xs rounded {{ $isSuccess ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700' }}">
-                  {{ $isSuccess ? 'Berhasil' : 'Gagal' }}
-                </span>
+                <span class="px-2 py-1 text-xs rounded {{ $statusBadge }}">{{ $statusLabel }}</span>
               </div>
               @if($isSuccess)
                 <a class="text-xs px-2 py-1 bg-gray-200 rounded" href="{{ route('anggota.iuran.pembayaran.receipt',$p) }}" target="_blank">Kwitansi</a>
