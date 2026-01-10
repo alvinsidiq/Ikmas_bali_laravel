@@ -11,8 +11,9 @@
         <x-input-label for="kategori" value="Jenis Laporan" />
         <select id="kategori" name="kategori" class="mt-1 block w-full border-gray-300 rounded">
           <option value="">— Pilih —</option>
-          <option value="Laporan Kegiatan">Laporan Kegiatan</option>
-          <option value="Laporan Pengumuman">Laporan Pengumuman</option>
+          @foreach(['Pengaduan','Saran','Fasilitas','Keuangan','Kegiatan','Lainnya'] as $label)
+            <option value="{{ $label }}">{{ $label }}</option>
+          @endforeach
         </select>
         <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
       </div>

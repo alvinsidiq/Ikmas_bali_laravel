@@ -27,9 +27,9 @@
         <p class="text-xs text-gray-600 mt-1">Album foto & media</p>
       </a>
       <a href="{{ route('anggota.laporan.index') }}" class="group rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-200 hover:shadow-md transition">
-        <p class="text-xs text-gray-500 uppercase">Laporan Kegiatan/Pengumuman</p>
+        <p class="text-xs text-gray-500 uppercase">Laporan Anggota</p>
         <div class="mt-2 text-3xl font-bold text-gray-900 group-hover:text-indigo-700">{{ number_format($stats['laporan']) }}</div>
-        <p class="text-xs text-gray-600 mt-1">Laporan hasil kegiatan & informasi resmi</p>
+        <p class="text-xs text-gray-600 mt-1">Pengaduan, saran, dan tindak lanjut komunitas</p>
       </a>
       <a href="{{ route('anggota.iuran.dashboard') }}" class="group rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-200 hover:shadow-md transition lg:col-span-2">
         <p class="text-xs text-gray-500 uppercase">Keuangan (Iuran)</p>
@@ -103,7 +103,7 @@
             <span class="text-xs text-gray-500">{{ number_format($stats['album']) }}</span>
           </a>
           <a class="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-slate-50" href="{{ route('anggota.laporan.index') }}">
-            <span>Laporan kegiatan & pengumuman</span>
+            <span>Laporan anggota & tindak lanjut</span>
             <span class="text-xs text-gray-500">{{ number_format($stats['laporan']) }}</span>
           </a>
         </div>

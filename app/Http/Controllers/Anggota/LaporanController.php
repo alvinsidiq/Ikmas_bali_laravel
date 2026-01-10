@@ -17,6 +17,15 @@ class LaporanController extends Controller
         $st = $request->get('status'); // open|in_progress|resolved|rejected
         $jenis = $request->get('jenis');
 
+        $categoryMap = [
+            'pengaduan' => ['Pengaduan'],
+            'saran' => ['Saran'],
+            'fasilitas' => ['Fasilitas'],
+            'keuangan' => ['Keuangan'],
+            'kegiatan' => ['Kegiatan'],
+            'lainnya' => ['Lainnya'],
+        ];
+
         if (!Schema::hasTable('laporans')) {
             $items = new LengthAwarePaginator([], 0, 12, 1, [
                 'path' => $request->url(),
@@ -31,12 +40,8 @@ class LaporanController extends Controller
                   ->orWhere('deskripsi','like',"%$q%")
                   ->orWhere('kode','like',"%$q%");
             }))
-            ->when($jenis, function($qr) use ($jenis){
-                $map = [
-                    'kegiatan' => ['Kegiatan','Laporan Kegiatan'],
-                    'pengumuman' => ['Pengumuman','Laporan Pengumuman'],
-                ];
-                $values = $map[$jenis] ?? [$jenis];
+            ->when($jenis, function($qr) use ($jenis, $categoryMap){
+                $values = $categoryMap[$jenis] ?? [$jenis];
                 $qr->whereIn('kategori', (array)$values);
             })
             ->when($st, fn($qr)=>$qr->where('status',$st))

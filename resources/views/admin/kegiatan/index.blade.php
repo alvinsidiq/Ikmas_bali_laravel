@@ -49,7 +49,9 @@
                                 @endif
                             </td>
                             <td class="px-4 py-3 align-top">
-                                <div class="font-semibold text-gray-900">{{ $k->judul }}</div>
+                                <a href="{{ route('admin.kegiatan.show', $k) }}" class="font-semibold text-gray-900 hover:underline">
+                                    {{ $k->judul }}
+                                </a>
                                 <div class="text-xs text-gray-500 mt-1 line-clamp-2">{{ Str::limit(strip_tags($k->deskripsi), 120) }}</div>
                             </td>
                             <td class="px-4 py-3 align-top text-gray-700">{{ $k->lokasi ?? '-' }}</td>

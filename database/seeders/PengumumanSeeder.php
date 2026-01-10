@@ -13,7 +13,7 @@ class PengumumanSeeder extends Seeder
         $author = User::role('admin')->first() ?? User::first();
         if (!$author) return;
 
-        $kats = ['Umum','Kegiatan','Pengurus','Keuangan'];
+        $kats = array_keys(\App\Models\Pengumuman::CATEGORY_OPTIONS);
         $covers = [
             'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1000&q=80',
             'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1000&q=80',

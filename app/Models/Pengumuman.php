@@ -16,6 +16,11 @@ class Pengumuman extends Model
         'judul','slug','kategori','isi','cover_path','is_published','published_at','is_pinned','author_id'
     ];
 
+    public const CATEGORY_OPTIONS = [
+        'Pengumuman' => 'Kategori Pengumuman',
+        'Forum' => 'Kategori Forum',
+    ];
+
     protected $casts = [
         'is_published' => 'boolean',
         'is_pinned' => 'boolean',
