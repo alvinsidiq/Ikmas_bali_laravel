@@ -19,6 +19,7 @@ class PengumumanController extends Controller
         $status = $request->get('status'); // published|draft|null
         $pinned = $request->get('pinned'); // 1|null
         $kat = $request->get('kat'); // kategori
+        $categories = Pengumuman::CATEGORY_OPTIONS;
 
         $items = Pengumuman::query()
             ->when($q, function($qr) use ($q){
@@ -35,15 +36,20 @@ class PengumumanController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view('admin.pengumuman.index', compact('items','q','status','pinned','kat'));
+        return view('admin.pengumuman.index', compact('items','q','status','pinned','kat','categories'));
     }
 
     public function create()
-    { return view('admin.pengumuman.create'); }
+    {
+        $categories = Pengumuman::CATEGORY_OPTIONS;
+        return view('admin.pengumuman.create', compact('categories'));
+    }
 
     public function store(StorePengumumanRequest $request)
     {
         $data = $request->validated();
+        $data['kategori'] = $data['kategori'] ?? array_key_first(Pengumuman::CATEGORY_OPTIONS);
+
         $m = new Pengumuman();
         $m->fill($data);
         $m->author_id = Auth::id();
@@ -59,11 +65,16 @@ class PengumumanController extends Controller
     { return view('admin.pengumuman.show', compact('pengumuman')); }
 
     public function edit(Pengumuman $pengumuman)
-    { return view('admin.pengumuman.edit', compact('pengumuman')); }
+    {
+        $categories = Pengumuman::CATEGORY_OPTIONS;
+        return view('admin.pengumuman.edit', compact('pengumuman','categories'));
+    }
 
     public function update(UpdatePengumumanRequest $request, Pengumuman $pengumuman)
     {
         $data = $request->validated();
+        $data['kategori'] = $data['kategori'] ?? array_key_first(Pengumuman::CATEGORY_OPTIONS);
+
         $pengumuman->fill($data);
         $newPub = $request->boolean('is_published');
         if ($newPub && !$pengumuman->is_published) { $pengumuman->is_published = true; $pengumuman->published_at = now(); }

@@ -1,4 +1,5 @@
 <x-app-layout>
+    @php($categoryOptions = $categories ?? \App\Models\Pengumuman::CATEGORY_OPTIONS)
     <x-slot name="header">
         <h2 class="font-semibold text-xl">Pengumuman</h2>
     </x-slot>
@@ -19,7 +20,12 @@
                     <option value="">Pin atau tidak</option>
                     <option value="1" @selected($pinned === '1')>Pinned saja</option>
                 </select>
-                <x-text-input name="kat" placeholder="Kategori" :value="$kat" />
+                <select name="kat" class="border-gray-300 rounded-md">
+                    <option value="">Semua Kategori</option>
+                    @foreach($categoryOptions as $value => $label)
+                        <option value="{{ $value }}" @selected($kat === $value)>{{ $label }}</option>
+                    @endforeach
+                </select>
                 <x-primary-button>Filter</x-primary-button>
             </form>
             <a href="{{ route('admin.pengumuman.create') }}" class="ml-auto inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded">+ Tambah</a>
@@ -43,7 +49,9 @@
                                 <div class="flex gap-3">
                                     <x-media-img :src="$p->cover_path" class="w-14 h-14 rounded object-cover" alt="Cover {{ $p->judul }}" />
                                     <div>
-                                        <div class="font-semibold text-gray-900">{{ $p->judul }}</div>
+                                        <a href="{{ route('admin.pengumuman.show', $p) }}" class="font-semibold text-gray-900 hover:underline">
+                                            {{ $p->judul }}
+                                        </a>
                                         <div class="text-xs text-gray-500 mt-1 line-clamp-2">{{ \Illuminate\Support\Str::limit(strip_tags($p->isi), 140) }}</div>
                                     </div>
                                 </div>

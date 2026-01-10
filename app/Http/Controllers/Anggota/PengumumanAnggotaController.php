@@ -15,6 +15,7 @@ class PengumumanAnggotaController extends Controller
         $kat = $request->get('kat');
         $pinnedOnly = $request->boolean('pinned');
         $unreadOnly = $request->boolean('unread');
+        $categories = Pengumuman::CATEGORY_OPTIONS;
 
         $user = Auth::user();
         $hasPivot = Schema::hasTable('pengumuman_user');
@@ -38,7 +39,7 @@ class PengumumanAnggotaController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return view('anggota.pengumuman.index', compact('items','q','kat','pinnedOnly','unreadOnly','readIds'));
+        return view('anggota.pengumuman.index', compact('items','q','kat','pinnedOnly','unreadOnly','readIds','categories'));
     }
 
     public function show(Pengumuman $pengumuman)
@@ -71,4 +72,3 @@ class PengumumanAnggotaController extends Controller
         return back()->with('success','Semua pengumuman ditandai terbaca.');
     }
 }
-

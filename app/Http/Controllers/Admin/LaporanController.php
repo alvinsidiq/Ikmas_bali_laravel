@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class LaporanController extends Controller
 {
@@ -22,6 +23,15 @@ class LaporanController extends Controller
         $jenis = $request->get('jenis');
         $from = $request->get('from');
         $to = $request->get('to');
+
+        $categoryMap = [
+            'pengaduan' => ['Pengaduan'],
+            'saran' => ['Saran'],
+            'fasilitas' => ['Fasilitas'],
+            'keuangan' => ['Keuangan'],
+            'kegiatan' => ['Kegiatan'],
+            'lainnya' => ['Lainnya'],
+        ];
 
         $fromDate = $toDate = null;
         try { $fromDate = $from ? Carbon::parse($from)->startOfDay() : null; } catch (\Exception $e) {}
@@ -44,12 +54,8 @@ class LaporanController extends Controller
                       ->orWhere('kode','like',"%$q%");
                 });
             })
-            ->when($jenis, function($qr) use ($jenis){
-                $map = [
-                    'kegiatan' => ['Kegiatan','Laporan Kegiatan'],
-                    'pengumuman' => ['Pengumuman','Laporan Pengumuman'],
-                ];
-                $values = $map[$jenis] ?? [$jenis];
+            ->when($jenis, function($qr) use ($jenis, $categoryMap){
+                $values = $categoryMap[$jenis] ?? [$jenis];
                 $qr->whereIn('kategori', (array)$values);
             })
             ->when($st, fn($qr)=>$qr->where('status',$st))
@@ -79,9 +85,11 @@ class LaporanController extends Controller
     {
         abort_unless(Schema::hasTable('laporans'), 404);
 
+        $categories = ['Pengaduan','Saran','Fasilitas','Keuangan','Kegiatan','Lainnya'];
+
         $data = $request->validate([
             'judul' => ['required','string','max:255'],
-            'kategori' => ['required','string','max:100'],
+            'kategori' => ['required','string','max:100', Rule::in($categories)],
             'deskripsi' => ['nullable','string'],
             'files' => ['nullable','array','max:10'],
             'files.*' => ['file','max:8192','mimes:pdf,doc,docx,xls,xlsx,csv,jpg,jpeg,png,webp,zip'],

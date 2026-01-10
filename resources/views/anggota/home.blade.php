@@ -36,8 +36,8 @@
       </a>
       <a href="{{ route('anggota.laporan.index') }}" class="group rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-200 hover:shadow-md transition">
         <p class="text-xs text-gray-500 uppercase">Laporan</p>
-        <h3 class="mt-2 text-lg font-semibold text-gray-900 group-hover:text-indigo-700">Kegiatan & Pengumuman</h3>
-        <p class="text-sm text-gray-600 mt-1">Baca dan unduh laporan yang tersedia.</p>
+        <h3 class="mt-2 text-lg font-semibold text-gray-900 group-hover:text-indigo-700">Pengaduan & Saran</h3>
+        <p class="text-sm text-gray-600 mt-1">Catat laporan anggota dan pantau tindak lanjutnya.</p>
       </a>
       <a href="{{ route('anggota.arsip.index') }}" class="group rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-200 hover:shadow-md transition">
         <p class="text-xs text-gray-500 uppercase">Arsip</p>

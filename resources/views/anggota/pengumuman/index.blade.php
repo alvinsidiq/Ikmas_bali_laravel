@@ -1,4 +1,5 @@
 <x-anggota-layout title="Pengumuman" subtitle="Informasi resmi & terbaru">
+  @php($categoryOptions = $categories ?? \App\Models\Pengumuman::CATEGORY_OPTIONS)
   <div class="space-y-6">
     @if(session('success'))
       <div class="mb-4 p-3 bg-green-100 border border-green-300 rounded">{{ session('success') }}</div>
@@ -19,7 +20,12 @@
           </div>
           <div>
             <label class="text-xs text-gray-600">Kategori</label>
-            <input name="kat" value="{{ $kat }}" placeholder="Kategori" class="w-full border-gray-300 rounded-md" />
+            <select name="kat" class="w-full border-gray-300 rounded-md">
+              <option value="">Semua Kategori</option>
+              @foreach($categoryOptions as $value => $label)
+                <option value="{{ $value }}" @selected($kat === $value)>{{ $label }}</option>
+              @endforeach
+            </select>
           </div>
           <label class="inline-flex items-center gap-2"><input type="checkbox" name="pinned" value="1" @checked($pinnedOnly)> <span class="text-sm">Pinned</span></label>
           <label class="inline-flex items-center gap-2"><input type="checkbox" name="unread" value="1" @checked($unreadOnly)> <span class="text-sm">Belum dibaca</span></label>

@@ -1,4 +1,5 @@
 @php($editing = isset($pengumuman))
+@php($categoryOptions = $categories ?? \App\Models\Pengumuman::CATEGORY_OPTIONS)
 <form method="POST" enctype="multipart/form-data" action="{{ $editing ? route('admin.pengumuman.update', $pengumuman) : route('admin.pengumuman.store') }}">
     @csrf
     @if($editing)
@@ -13,7 +14,11 @@
         </div>
         <div>
             <x-input-label for="kategori" value="Kategori" />
-            <x-text-input id="kategori" name="kategori" type="text" class="mt-1 block w-full" :value="old('kategori', $pengumuman->kategori ?? '')" />
+            <select id="kategori" name="kategori" class="mt-1 block w-full border-gray-300 rounded">
+                @foreach($categoryOptions as $value => $label)
+                    <option value="{{ $value }}" @selected(old('kategori', $pengumuman->kategori ?? array_key_first($categoryOptions)) === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
             <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
         </div>
         <div class="md:col-span-2">
