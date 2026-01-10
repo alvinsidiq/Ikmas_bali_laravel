@@ -2,8 +2,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Kegiatan;
 use App\Models\Laporan;
 use App\Models\LaporanAttachment;
+use App\Models\Pengumuman;
 use App\Support\LaporanCode;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -18,61 +20,98 @@ class LaporanController extends Controller
     public function index(Request $request)
     {
         $q = trim((string)$request->get('q'));
-        $st = $request->get('status'); // open|in_progress|resolved|rejected
-        $reporter = $request->get('reporter');
-        $jenis = $request->get('jenis');
+        $status = $request->get('status'); // published|draft|null
+        $jenis = $request->get('jenis'); // pengumuman|kegiatan|null
         $from = $request->get('from');
         $to = $request->get('to');
-
-        $categoryMap = [
-            'pengaduan' => ['Pengaduan'],
-            'saran' => ['Saran'],
-            'fasilitas' => ['Fasilitas'],
-            'keuangan' => ['Keuangan'],
-            'kegiatan' => ['Kegiatan'],
-            'lainnya' => ['Lainnya'],
-        ];
 
         $fromDate = $toDate = null;
         try { $fromDate = $from ? Carbon::parse($from)->startOfDay() : null; } catch (\Exception $e) {}
         try { $toDate = $to ? Carbon::parse($to)->endOfDay() : null; } catch (\Exception $e) {}
 
-        if (!Schema::hasTable('laporans')) {
-            $items = new LengthAwarePaginator([], 0, 15, 1, [
-                'path' => $request->url(),
-                'query' => $request->query(),
-            ]);
-            return view('admin.laporan.index', compact('items','q','st','reporter','jenis','from','to'));
+        $items = collect();
+
+        if (Schema::hasTable('pengumumen') && ($jenis === null || $jenis === '' || $jenis === 'pengumuman')) {
+            $pengumumanItems = Pengumuman::query()
+                ->when($q, function($qr) use ($q){
+                    $qr->where('judul','like',"%$q%")
+                       ->orWhere('kategori','like',"%$q%")
+                       ->orWhere('isi','like',"%$q%");
+                })
+                ->when($status === 'published', fn($qr)=>$qr->where('is_published', true))
+                ->when($status === 'draft', fn($qr)=>$qr->where('is_published', false))
+                ->latest('published_at')
+                ->latest('id')
+                ->get()
+                ->map(function($p){
+                    $date = $p->published_at ?? $p->created_at;
+                    return (object)[
+                        'type' => 'pengumuman',
+                        'type_label' => 'Pengumuman',
+                        'title' => $p->judul,
+                        'meta_label' => 'Kategori',
+                        'meta_value' => $p->kategori ?? '-',
+                        'status_label' => $p->is_published ? 'Published' : 'Draft',
+                        'status_class' => $p->is_published ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700',
+                        'date' => $date,
+                        'date_label' => $date ? $date->format('d M Y H:i') : '-',
+                        'date_meta' => $p->published_at ? 'Terbit' : 'Dibuat',
+                        'detail_url' => route('admin.pengumuman.show', $p),
+                    ];
+                });
+            $items = $items->merge($pengumumanItems);
         }
 
-        $items = Laporan::query()
-            ->with('reporter')
-            ->when($q, function($qr) use ($q){
-                $qr->where(function($x) use ($q){
-                    $x->where('judul','like',"%$q%")
-                      ->orWhere('deskripsi','like',"%$q%")
-                      ->orWhere('kode','like',"%$q%");
+        if (Schema::hasTable('kegiatans') && ($jenis === null || $jenis === '' || $jenis === 'kegiatan')) {
+            $kegiatanItems = Kegiatan::query()
+                ->when($q, function($qr) use ($q){
+                    $qr->where('judul','like',"%$q%")
+                       ->orWhere('lokasi','like',"%$q%")
+                       ->orWhere('deskripsi','like',"%$q%");
+                })
+                ->when($status === 'published', fn($qr)=>$qr->where('is_published', true))
+                ->when($status === 'draft', fn($qr)=>$qr->where('is_published', false))
+                ->latest('waktu_mulai')
+                ->latest('id')
+                ->get()
+                ->map(function($k){
+                    $date = $k->waktu_mulai ?? $k->created_at;
+                    $end = $k->waktu_selesai;
+                    return (object)[
+                        'type' => 'kegiatan',
+                        'type_label' => 'Kegiatan',
+                        'title' => $k->judul,
+                        'meta_label' => 'Lokasi',
+                        'meta_value' => $k->lokasi ?? '-',
+                        'status_label' => $k->is_published ? 'Published' : 'Draft',
+                        'status_class' => $k->is_published ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-700',
+                        'date' => $date,
+                        'date_label' => $date ? $date->format('d M Y H:i') : '-',
+                        'date_meta' => $end ? 'Selesai '.$end->format('d M Y H:i') : null,
+                        'detail_url' => route('admin.kegiatan.show', $k),
+                    ];
                 });
-            })
-            ->when($jenis, function($qr) use ($jenis, $categoryMap){
-                $values = $categoryMap[$jenis] ?? [$jenis];
-                $qr->whereIn('kategori', (array)$values);
-            })
-            ->when($st, fn($qr)=>$qr->where('status',$st))
-            ->when($reporter, function($qr) use ($reporter){
-                $qr->whereHas('reporter', function($u) use ($reporter){
-                    $u->where('name','like',"%$reporter%")
-                      ->orWhere('email','like',"%$reporter%");
-                });
-            })
-            ->when($fromDate, fn($qr)=>$qr->where('created_at','>=',$fromDate))
-            ->when($toDate, fn($qr)=>$qr->where('created_at','<=',$toDate))
-            ->latest('status')
-            ->latest('updated_at')
-            ->latest('id')
-            ->paginate(15)->withQueryString();
+            $items = $items->merge($kegiatanItems);
+        }
 
-        return view('admin.laporan.index', compact('items','q','st','reporter','jenis','from','to'));
+        if ($fromDate) {
+            $items = $items->filter(fn($item)=>$item->date && $item->date->greaterThanOrEqualTo($fromDate));
+        }
+        if ($toDate) {
+            $items = $items->filter(fn($item)=>$item->date && $item->date->lessThanOrEqualTo($toDate));
+        }
+
+        $items = $items->sortByDesc('date')->values();
+
+        $perPage = 15;
+        $page = LengthAwarePaginator::resolveCurrentPage();
+        $pagedItems = $items->slice(($page - 1) * $perPage, $perPage)->values();
+        $items = new LengthAwarePaginator($pagedItems, $items->count(), $perPage, $page, [
+            'path' => $request->url(),
+            'query' => $request->query(),
+        ]);
+
+        return view('admin.laporan.index', compact('items','q','status','jenis','from','to'));
     }
 
     public function create()
