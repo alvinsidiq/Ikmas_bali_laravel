@@ -38,9 +38,7 @@
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           <div class="flex items-center gap-3">
             <a href="{{ route('anggota.home') }}" class="flex items-center gap-2 font-bold text-lg text-gray-900">
-              <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-600 text-white">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M4 10v10a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h4a1 1 0 001-1V10"></path></svg>
-              </span>
+              <x-application-logo class="h-9 w-9 rounded-full" />
               <span>{{ $brand }}</span>
             </a>
           </div>
@@ -90,10 +88,14 @@
                 </button>
               </form>
             @endif
+            <x-application-logo class="h-8 w-8 rounded-full" />
           </div>
-          <button @click="open=!open" class="lg:hidden inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100" aria-label="Toggle navigation">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
-          </button>
+          <div class="lg:hidden flex items-center gap-2">
+            <x-application-logo class="h-8 w-8 rounded-full" />
+            <button @click="open=!open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100" aria-label="Toggle navigation">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            </button>
+          </div>
         </div>
         <div x-show="open" x-transition class="lg:hidden border-t border-slate-200 bg-white">
           <nav class="px-4 py-3 flex flex-col gap-2 text-sm">

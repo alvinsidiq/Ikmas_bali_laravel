@@ -26,12 +26,16 @@
 
                     <div class="flex-1 flex flex-col min-h-screen bg-gray-50">
                         <div class="bg-white border-b px-4 py-3 flex items-center justify-between lg:hidden">
-                            <button @click="sidebarOpen = true" class="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 focus:outline-none">
-                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                                </svg>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button @click="sidebarOpen = true" class="inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 focus:outline-none">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                                    </svg>
+                                </button>
+                                <x-application-logo class="h-7 w-7 rounded-full" />
+                            </div>
                             <div class="flex items-center gap-3">
+                                <x-application-logo class="h-7 w-7 rounded-full" />
                                 <div class="text-sm text-gray-700">{{ $user->name }}</div>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
