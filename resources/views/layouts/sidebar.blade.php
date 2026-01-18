@@ -13,16 +13,17 @@
         <div class="h-full flex flex-col">
             <div class="p-4 h-16 border-b border-gray-200 flex items-center gap-3">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-bold text-lg text-gray-900">
-                  <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-indigo-600 text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l9-9 9 9M4 10v10a1 1 0 001 1h4a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h4a1 1 0 001-1V10"></path></svg>
-                  </span>
+                  <x-application-logo class="h-9 w-9 rounded-full" />
                   <span>{{ config('app.name', 'Ikmas Bali') }}</span>
                 </a>
-                <button class="ml-auto text-gray-500 hover:text-gray-800 lg:hidden" @click="sidebarOpen = false">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <div class="ml-auto flex items-center gap-2">
+                    <x-application-logo class="h-7 w-7 rounded-full opacity-80" />
+                    <button class="text-gray-500 hover:text-gray-800 lg:hidden" @click="sidebarOpen = false">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <nav class="flex-1 overflow-y-auto p-4 space-y-6">
