@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDash;
 use App\Http\Controllers\Bendahara\DashboardController as BendDash;
+use App\Http\Controllers\Bendahara\AnggotaController as BendAnggota;
 use App\Http\Controllers\Anggota\DashboardController as AnggotaDash;
 use App\Http\Controllers\Admin\AnggotaController;
 use App\Http\Controllers\Admin\KegiatanController;
@@ -93,6 +94,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Bendahara
     Route::prefix('bendahara')->name('bendahara.')->middleware('role:bendahara')->group(function(){
         Route::get('/dashboard', [BendDash::class, 'index'])->name('dashboard');
+        Route::get('/anggota', [BendAnggota::class, 'index'])->name('anggota.index');
         Route::get('/iuran', [BendIuranDashboard::class, 'index'])->name('iuran.dashboard');
 
         Route::get('/iuran/tagihan/export', [BendTagihan::class, 'export'])->name('tagihan.export');

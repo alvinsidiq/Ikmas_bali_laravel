@@ -49,6 +49,7 @@
                         <p class="px-3 text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Bendahara</p>
                         <div class="space-y-1">
                             <a class="{{ $linkClass(request()->routeIs('bendahara.dashboard')) }}" href="{{ route('bendahara.dashboard') }}">Dashboard</a>
+                            <a class="{{ $linkClass(request()->routeIs('bendahara.anggota.*')) }}" href="{{ route('bendahara.anggota.index') }}">Anggota</a>
                             <a class="{{ $linkClass(request()->routeIs('bendahara.iuran.*')) }}" href="{{ route('bendahara.iuran.dashboard') }}">Ringkasan Iuran</a>
                             <a class="{{ $linkClass(request()->routeIs('bendahara.tagihan.*')) }}" href="{{ route('bendahara.tagihan.index') }}">Tagihan</a>
                             <a class="{{ $linkClass(request()->routeIs('bendahara.pembayaran.*')) }}" href="{{ route('bendahara.pembayaran.index') }}">Pembayaran</a>
